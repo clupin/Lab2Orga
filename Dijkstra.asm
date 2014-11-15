@@ -5,7 +5,9 @@
 elNumeroEs: .asciiz "\nEl número es: "
 desdeNodo: .asciiz " desde el nodo: "
 txtEnd: .asciiz "\nPrograma Terminado"
-matrizGrafo: .word 0,9,5,0,0,0,0,0,0,0 ,0,0,0,1,3,0,0,0,0,0 ,0,0,0,0,4,9,0,0,0,0 ,0,0,0,0,0,0,1,3,0,0 ,0,0,0,0,0,0,8,1,6,0 ,0,0,0,0,0,0,0,3,7,0 ,0,0,0,0,0,0,0,0,0,4 ,0,0,0,0,0,0,0,0,0,4 ,0,0,0,0,0,0,0,0,0,1 ,0,0,0,0,0,0,0,0,0,0
+matrizGrafo: .word 0,1,15,999,999,999, 1,0,4,999,10,999, 15,4,0,2,5,999, 999,999,2,0,1,88, 999,10,5,1,0,3, 999,999,999,88,3,0
+EA .word 0,0,0,0,0,0
+CH .word 999,999,999,999,999,999
 
 .text
 #se guarda matrizGrafo en $a1
@@ -22,16 +24,8 @@ add $t2, $zero, $zero #costo
 add $t3, $zero, $zero #origen
 add $t5, $zero, $zero #
 
-#Algoritmo de Dijkstra
-#se lee la primera posicion de matrizGrafo
-lw $t4, 0($a1)
-#se guarda la posicion inicial (0,0)
-add $t2, $t2, $t4
-#se guarda el origen, como es la posicion inicial es 0
-add $t3, $t3, $t0
-
 #funcion para obtener el valor de de la matriz
-# entrada $a0 $a1
+# entrada $a0=A $a1=B, retorno en $v0
 GET_MATRIX_VAL:
 	la $t0, matrizGrafo#dir
 	addi $t1, $zero , 6 #N
@@ -42,31 +36,6 @@ GET_MATRIX_VAL:
 	lw $t3 , 0($t2)
 	move $v0, $t3#
 	j $ra#return M[A][B]
-
-FOR_FILA:
-	jal Print
-	beq $t1, 9, END_FOR_FILA
-	#se cambia el valor del costo, al costo correspondiente a la posicion en la fila
-	#se lee la posicion $t0 de matrizGrafo
-	sll $t6, $t0, 2
-	add $t6, $t6, $a1
-	lw $t4, 0($t6)
-	add $t2, $zero, $t6
-	add $t3, $zero, $t0
-	
-	#sw $t0, 0($t5)
-	addi $t1, $t1, 1	#fila++
-	
-	j FOR_FILA
-	
-END_FOR_FILA:
-j Salir
-
-Guardar:
-	addi $sp, $sp, -8 	# crea espacio para guardar los dato
-	sw $t2, 0($sp)		# guarda el costo
-	sw $t3, 4($sp)		# guarda el origen
-	j Print
 
 Print:
 	li $v0, 4 #Se carga 4 (texto) en $v0
