@@ -1,5 +1,7 @@
 .data
 #matriz del grafo
+#se declara infinito a 999
+
 elNumeroEs: .asciiz "\nEl número es: "
 desdeNodo: .asciiz " desde el nodo: "
 txtEnd: .asciiz "\nPrograma Terminado"
@@ -27,6 +29,19 @@ lw $t4, 0($a1)
 add $t2, $t2, $t4
 #se guarda el origen, como es la posicion inicial es 0
 add $t3, $t3, $t0
+
+#funcion para obtener el valor de de la matriz
+# entrada $a0 $a1
+GET_MATRIX_VAL:
+	la $t0, matrizGrafo#dir
+	addi $t1, $zero , 6 #N
+	mul $t1, $a1, $t1#NB
+	add $t1, $t1, $0# NB+A
+	sll $t2, $t1, 2#el corrimiento
+	add $t2, $t2, $t0#4*I+Dir 
+	lw $t3 , 0($t2)
+	move $v0, $t3#
+	j $ra#return M[A][B]
 
 FOR_FILA:
 	jal Print
