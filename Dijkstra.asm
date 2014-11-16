@@ -6,8 +6,8 @@ elNumeroEs: .asciiz "\nEl número es: "
 desdeNodo: .asciiz " desde el nodo: "
 txtEnd: .asciiz "\nPrograma Terminado"
 matrizGrafo: .word 0,1,15,999,999,999, 1,0,4,999,10,999, 15,4,0,2,5,999, 999,999,2,0,1,88, 999,10,5,1,0,3, 999,999,999,88,3,0
-EA .word 1,1,1,1,1,1
-CH .word 999,999,999,999,999,999
+EA: .word 1,1,1,1,1,1
+CH: .word 999,999,999,999,999,999
 
 .text
 #se guarda matrizGrafo en $a1
@@ -42,29 +42,29 @@ FUNCION:
 	addi $t5, $zero, 6#seis
 	FOR_1:
 		add $a0, $zero, $t0#Parametro I para get_EA
-		GET_EA
+		jal GET_EA
 		move $t1, $v0#T1=EA[i]
 		bne $t1, $s4, ELSE_1
 			#t2 = CP
 			add $a0 , $zero, $s2
 			add $a1, $zero, $t0
-			GET_MATRIX_VAL
+			jal GET_MATRIX_VAL
 			move $t2, $v0
 			add $t2, $t2, $s0#T2= CA+ M[ACT][i]
 			#t3= CH[i]
 			add $a0, $zero,$t0
-			GET_CH
+			jal GET_CH
 			move $t3, $v0
 			blt  $t3, $t2 ELSE_2
 				#a0 ya es i
 				add $a1, $zero, $t2
-				SET_CH
+				jal SET_CH
 			ELSE_2:
 			bgt $t2, $t9, ELSE_3
 				add $t9, $zero, $2
 				add $t8, $zero, $t0
 			ELSE_3:
-		ElSE_1:
+		ELSE_1:
 	addi $t0, $t0, 1
 	blt $t0, $t5, FOR_1
 	add $s0, $zero,$t9#CA= CPM
@@ -73,7 +73,7 @@ FUNCION:
 	
 	#t7=EA[t]
 	add $a0, $zero, $s1
-	GET_EA
+	jal GET_EA
 	move $t7, $v0
 	beq $t7, $s4, FUNCION
 
@@ -93,7 +93,7 @@ GET_MATRIX_VAL:
 	add $t2, $t2, $t0#4*I+Dir 
 	lw $t3 , 0($t2)
 	move $v0, $t3#
-	j $ra#return M[A][B]
+	jr $ra#return M[A][B]
 #entrada EA[$a0] entra el valor dentro de los corchetes
 GET_EA:
 	la $t0, EA#dir
@@ -101,7 +101,7 @@ GET_EA:
 	add $t2, $t1, $t0#4*I+Dir 
 	lw $t3 , 0($t2)
 	move $v0, $t3#
-	j $ra#return M[A][B]
+	jr $ra#return M[A][B]
 
 GET_CH:
 	la $t0, CH#dir¡
@@ -109,7 +109,7 @@ GET_CH:
 	add $t2, $t1, $t0#4*I+Dir 
 	lw $t3 , 0($t2)
 	move $v0, $t3#
-	j $ra#return M[A][B]la $t0, matrizGrafo#dir
+	jr $ra#return M[A][B]la $t0, matrizGrafo#dir
 #retornan en $v0  el valor dentro del arreglos
 #se setea el valor de EA[$a0]=$a1
 SET_EA:
@@ -117,14 +117,14 @@ SET_EA:
 	sll $t1, $a0, 2#el corrimiento
 	add $t2, $t1, $t0#4*I+Dir 
 	sw $a1 , 0($t2)
-	j $ra#return M[A][B]
+	jr $ra#return M[A][B]
 #se setea el valor de CH[$a0]=$a1
 SET_CH:
 	la $t0, EA#dir
 	sll $t1, $a0, 2#el corrimiento
 	add $t2, $t1, $t0#4*I+Dir 
 	sw $a1 , 0($t2)
-	j $ra#return M[A][B]
+	jr $ra#return M[A][B]
 
 Print:
 	li $v0, 4 #Se carga 4 (texto) en $v0
