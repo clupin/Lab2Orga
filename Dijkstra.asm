@@ -32,9 +32,11 @@ FUNCION:
 	move $t0, $v0
 	bne $s4, $t0, Salir#if EA[T]=1
 	#parametros para SET_EA
-	add $a0, $zero, $s2
-	add $a1, $zero, $zero
+	add $a0, $zero, $s2#$a0=ACT
+	
+	add $a1, $zero, $zero#$a1=0
 	jal SET_EA#se configura  EA[act]=0
+	
 	add $t9 , $zero, $s3#CPM=inf
 	add $t8 , $zero, $zero#pos=0
 	#for(i=0;i<6;i++)
@@ -46,19 +48,20 @@ FUNCION:
 		move $t1, $v0#T1=EA[i]
 		bne $t1, $s4, ELSE_1
 			#t2 = CP
-			add $a0 , $zero, $s2
-			add $a1, $zero, $t0
+			add $a0 , $zero, $s2#$a0= ACT
+			add $a1, $zero, $t0#$a1= i
 			jal GET_MATRIX_VAL
 			move $t2, $v0
 			add $t2, $t2, $s0#T2= CA+ M[ACT][i]
 			#t3= CH[i]
-			add $a0, $zero,$t0
+			add $a0, $zero,$t0#$a0=i
 			jal GET_CH
 			move $t3, $v0
 			blt  $t3, $t2 ELSE_2
-				#a0 ya es i
+				
+				add $a0, $zero, $t0#$a0=i
 				add $a1, $zero, $t2
-				jal SET_CH
+				jal SET_CH#set costo hacia
 			ELSE_2:
 			bgt $t2, $t9, ELSE_3
 				add $t9, $zero, $2
@@ -77,7 +80,8 @@ FUNCION:
 	move $t7, $v0
 	beq $t7, $s4, FUNCION
 
-j Print
+addi $a0, $zero, 6
+jal GET_CH
 	
 	
 	
@@ -85,46 +89,75 @@ j Print
 #funcion para obtener el valor de de la matriz
 # entrada $a0=A $a1=B, retorno en $v0
 GET_MATRIX_VAL:
-	la $t0, matrizGrafo#dir
-	addi $t1, $zero , 6 #N
-	mul $t1, $a1, $t1#NB
-	add $t1, $t1, $a0# NB+A
-	sll $t2, $t1, 2#el corrimiento
-	add $t2, $t2, $t0#4*I+Dir 
-	lw $t3 , 0($t2)
-	move $v0, $t3#
+	#la $t0, matrizGrafo#dir
+	#addi $t1, $zero , 6 #N
+	#mul $t1, $a1, $t1#NB
+	#add $t1, $t1, $a0# NB+A
+	#sll $t2, $t1, 2#el corrimiento
+	#add $t2, $t2, $t0#4*I+Dir 
+	#lw $t3 , 0($t2)
+	#move $v0, $t3#
+	#j $ra#return M[A][B]
+	
+	la $a2, matrizGrafo#dir
+	
+	addi $a3, $zero , 6 #N
+	mul $a3, $a1, $a3#NB
+	add $a3, $a3, $a0# NB+A
+	
+	sll $a0, $a0, 2#el corrimiento
+	add $a0, $a0, $a2#4*I+Dir
+	lw $a1 , 0($a0)
+	move $v0, $a1# 
+	
 	jr $ra#return M[A][B]
+	
+	
 #entrada EA[$a0] entra el valor dentro de los corchetes
 GET_EA:
-	la $t0, EA#dir
-	sll $t1, $a0, 2#el corrimiento
-	add $t2, $t1, $t0#4*I+Dir 
-	lw $t3 , 0($t2)
-	move $v0, $t3#
-	jr $ra#return M[A][B]
+	#la $t0, EA#dir
+	#sll $t1, $a0, 2#el corrimiento
+	#add $t2, $t1, $t0#4*I+Dir 
+	#lw $t3 , 0($t2)
+	#move $v0, $t3#
+	#j $ra#
+	la $a2, EA#dir
+	sll $a0, $a0, 2#el corrimiento
+	add $a0, $a0, $a2#4*I+Dir
+	lw $a1 , 0($a0)
+	move $v0, $a1# 
+	jr $ra#return EA[$a0]
 
 GET_CH:
-	la $t0, CH#dir¡
-	sll $t1, $a0, 2#el corrimiento
-	add $t2, $t1, $t0#4*I+Dir 
-	lw $t3 , 0($t2)
-	move $v0, $t3#
-	jr $ra#return M[A][B]la $t0, matrizGrafo#dir
+	#la $t0, CH#dir¡
+	#sll $t1, $a0, 2#el corrimiento
+	#add $t2, $t1, $t0#4*I+Dir 
+	#lw $t3 , 0($t2)
+	#move $v0, $t3#
+	#j $ra#
+	la $a2, CH#dir
+	sll $a0, $a0, 2#el corrimiento
+	add $a0, $a0, $a2#4*I+Dir
+	lw $a1 , 0($a0)
+	move $v0, $a1# 
+	jr $ra#return null
+	
 #retornan en $v0  el valor dentro del arreglos
+
 #se setea el valor de EA[$a0]=$a1
 SET_EA:
-	la $t0, EA#dir
-	sll $t1, $a0, 2#el corrimiento
-	add $t2, $t1, $t0#4*I+Dir 
-	sw $a1 , 0($t2)
-	jr $ra#return M[A][B]
+	la $a2, EA#dir
+	sll $a0, $a0, 2#el corrimiento
+	add $a0, $a0, $a2#4*I+Dir 
+	sw $a1 , 0($a0)
+	jr $ra#return null
 #se setea el valor de CH[$a0]=$a1
 SET_CH:
-	la $t0, EA#dir
-	sll $t1, $a0, 2#el corrimiento
-	add $t2, $t1, $t0#4*I+Dir 
-	sw $a1 , 0($t2)
-	jr $ra#return M[A][B]
+	la $a2, CH#dir
+	sll $a0, $a0, 2#el corrimiento
+	add $a0, $a0, $a2#4*I+Dir 
+	sw $a1 , 0($a0)
+	jr $ra#return null
 
 Print:
 	li $v0, 4 #Se carga 4 (texto) en $v0
