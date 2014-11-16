@@ -25,6 +25,7 @@ add $s2, $zero, $zero# ACT
 add $s3, $zero, 999#inf
 addi $s4, $zero, 1# uno
 addi $s5, $zero, 6#6
+add $s6, $zero, $zero #CP
 
 #el programa va aqui
 FUNCION:
@@ -53,19 +54,19 @@ FUNCION:
 			add $a0 , $zero, $s2
 			add $a1, $zero, $t0
 			jal GET_MATRIX_VAL
-			move $t2, $v0
-			add $t2, $t2, $s0#T2= CA+ M[ACT][i]
+			move $s6, $v0
+			add $s6, $s6, $s0#T2= CA+ M[ACT][i]
 			#t3= CH[i]
 			add $a0, $zero,$t0
 			jal GET_CH
 			move $t3, $v0
-			blt  $t3, $t2 ELSE_2
+			blt  $t3, $s6 ELSE_2
 				#a0 ya es i
-				add $a1, $zero, $t2
+				add $a1, $zero, $s6
 				jal SET_CH
 			ELSE_2:
-			bgt $t2, $t9, ELSE_3
-				add $t9, $zero, $2
+			bgt $s6, $t9, ELSE_3
+				add $t9, $zero, $s6
 				add $t8, $zero, $t0
 			ELSE_3:
 		ELSE_1:
