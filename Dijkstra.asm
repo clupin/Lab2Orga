@@ -63,7 +63,7 @@ FUNCION:
 				add $a1, $zero, $t2
 				jal SET_CH#set costo hacia
 			ELSE_2:
-			bgt $t2, $t9, ELSE_3
+			bge $t2, $t9, ELSE_3#CP<CPM
 				add $t9, $zero, $2
 				add $t8, $zero, $t0
 			ELSE_3:
@@ -80,8 +80,10 @@ FUNCION:
 	move $t7, $v0
 	beq $t7, $s4, FUNCION
 
-addi $a0, $zero, 6
-jal GET_CH
+j Salir
+
+#addi $a0, $zero, 6
+#jal GET_CH
 	
 	
 	
@@ -105,9 +107,9 @@ GET_MATRIX_VAL:
 	mul $a3, $a1, $a3#NB
 	add $a3, $a3, $a0# NB+A
 	
-	sll $a0, $a0, 2#el corrimiento
-	add $a0, $a0, $a2#4*I+Dir
-	lw $a1 , 0($a0)
+	sll $a3, $a3, 2#el corrimiento
+	add $a3, $a3, $a2#4*I+Dir
+	lw $a1 , 0($a3)
 	move $v0, $a1# 
 	
 	jr $ra#return M[A][B]
