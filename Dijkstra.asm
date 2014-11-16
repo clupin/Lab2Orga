@@ -2,7 +2,7 @@
 #matriz del grafo
 #se declara infinito a 999
 
-elNumeroEs: .asciiz "\nEl número es: "
+laResp: .asciiz "\nLa respuesta es: "
 desdeNodo: .asciiz " desde el nodo: "
 txtEnd: .asciiz "\nPrograma Terminado"
 matrizGrafo: .word 0,1,15,999,999,999, 1,0,4,999,10,999, 15,4,0,2,5,999, 999,999,2,0,1,88, 999,10,5,1,0,3, 999,999,999,88,3,0
@@ -57,14 +57,16 @@ FUNCION:
 			add $a0, $zero,$t0#$a0=i
 			jal GET_CH
 			move $t3, $v0
-			blt  $t3, $t2 ELSE_2
+			ble  $t3, $t2 ELSE_2
+			#blt  $t3, $t2 ELSE_2
 				
 				add $a0, $zero, $t0#$a0=i
 				add $a1, $zero, $t2
 				jal SET_CH#set costo hacia
 			ELSE_2:
-			bge $t2, $t9, ELSE_3#CP<CPM
-				add $t9, $zero, $2
+			bge $t2, $t9, ELSE_3
+			#bgt $t2, $t9, ELSE_3
+				add $t9, $zero, $t2
 				add $t8, $zero, $t0
 			ELSE_3:
 		ELSE_1:
@@ -80,10 +82,12 @@ FUNCION:
 	move $t7, $v0
 	beq $t7, $s4, FUNCION
 
+#se obtiene el ultimo valor de CH
+addi $a0, $zero, 5
+jal GET_CH
+move $t2, $v0#T1=EA[i]
+jal Print
 j Salir
-
-#addi $a0, $zero, 6
-#jal GET_CH
 	
 	
 	
@@ -131,7 +135,7 @@ GET_EA:
 	jr $ra#return EA[$a0]
 
 GET_CH:
-	#la $t0, CH#dir¡
+	#la $t0, CH#dir�
 	#sll $t1, $a0, 2#el corrimiento
 	#add $t2, $t1, $t0#4*I+Dir 
 	#lw $t3 , 0($t2)
@@ -163,23 +167,12 @@ SET_CH:
 
 Print:
 	li $v0, 4 #Se carga 4 (texto) en $v0
-	la $a0, elNumeroEs #Se carga el texto "El Numero es: " en $a0
+	la $a0, laResp #Se carga el texto "La Respuesta es: " en $a0
 	syscall #llamada al sistema
 	li $v0, 1 #se carga 1 (numero) en v0
 	move $a0, $t2 #se mueve $t2 a $a0
 	syscall	#llamada al sistema
-
-	li $v0, 4 #Se carga 4 (texto) en $v0
-	la $a0, desdeNodo #Se carga el texto "desde el nodo: " en $a0
-	syscall #llamada al sistema
-	li $v0, 1 #se carga 1 (numero) en v0
-	move $a0, $t3 #se mueve $t3 a $a0
-	syscall	#llamada al sistema
 	jr $ra	#volver al registro de jal
-
-
-
-
 
 Salir:
 
