@@ -183,12 +183,13 @@ FIND_MIN:
 		move $t4, $v0	#$t4=CH[i]
 		bge $t4, $t5, ELSE	#if(CH[i]<999)
 			add $t5, $zero, $t4	#$t5 = CH[i]
+			move $v1, $t6
 		ELSE:
 	addi $t6, $t6, 1
 	blt $t6, $s5, FOR
 	move $v0, $t5#	se guarda en v0 el valor de t5
 	move $ra, $t7	#devolvemos el valor de $ra de antes de GET_CH
-	jr $ra	
+	jr $ra	#v0 valor minimo, v1 posicion valor minimo
 UPDATE_CH:
 	add $t6, $zero, $zero	#$t6 = 0 = i
 	move $t7, $ra	#guardamos el antiguo valor de $ra
