@@ -34,6 +34,10 @@ FUNCION:
 	jal SET_EA	#se configura  EA[act]=0
 	#if(EA[target]==0)
 	#obtener EA[target] EA[$a0]
+	add $a0, $zero, $s2
+	add $a1, $zero, $s3
+	jal SET_CH
+	
 	add $a0, $zero, $s1
 	jal GET_EA
 	move $t0, $v0 #guarda en $t0=EA[target]
@@ -86,7 +90,7 @@ GET_MATRIX_VAL:
 	
 	la $a2, matrizGrafo#dir
 	
-	addi $a3, $zero , 6 #N
+	add $a3, $zero , $s5 #N
 	mul $a3, $a1, $a3#NB
 	add $a3, $a3, $a0# NB+A
 	
