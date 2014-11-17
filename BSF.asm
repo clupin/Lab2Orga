@@ -5,9 +5,9 @@
 laResp: .asciiz "\nLa respuesta es: "
 desdeNodo: .asciiz " desde el nodo: "
 txtEnd: .asciiz "\nPrograma Terminado"
-matrizGrafo: .word 0,1,15,999,999,999, 1,0,4,999,5,999, 15,4,0,2,57,999, 999,999,2,0,1,88, 999,5,57,1,0,3, 999,999,999,88,3,0
-EA: .word 1,1,1,1,1,1
-CH: .word 999,999,999,999,999,999
+matrizGrafo: .word 0,1,15,999,999,999,999,999, 1,0,4,999,5,999,999,999, 15,4,0,2,57,999,1,999, 999,999,2,0,1,88,999,999, 999,5,57,1,0,3,999,999, 999,999,999,88,3,0,999,999, 999,999,1,999,999,999,0,8, 999,999,999,999,999,999,8,0
+EA: .word 1,1,1,1,1,1,1,1
+CH: .word 999,999,999,999,999,999,999,999
 
 .text
 #se guarda matrizGrafo en $a1
@@ -24,7 +24,7 @@ addi $s1, $zero, 5 #Target
 add $s2, $zero, $zero# ACT
 add $s3, $zero, 999#inf
 addi $s4, $zero, 1# uno
-addi $s5, $zero, 6# seis
+addi $s5, $zero, 8#MAX = 8
 
 #el programa va aqui
 FUNCION:
