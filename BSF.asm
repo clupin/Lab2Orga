@@ -70,7 +70,7 @@ FUNCION:
 	j FUNCION	
 	ELSE_1:
 	
-	add $a0, $zero, $s0
+	add $t2, $zero, $s0
 	jal Print
 	
 	j Salir	
