@@ -189,6 +189,29 @@ FIND_MIN:
 	move $v0, $t5#	se guarda en v0 el valor de t5
 	move $ra, $t7	#devolvemos el valor de $ra de antes de GET_CH
 	jr $ra	
+UPDATE_CH:
+	add $t6, $zero, $zero	#$t6 = 0 = i
+	move $t7, $ra	#guardamos el antiguo valor de $ra
+	FOR:
+		add $a0, $zero, $s2
+		add $a1, $zero, $t6#M[ACT][i]
+		jal GET_MATRIX_VAL
+		move $t5, $v0
+		#if(EA[i]=1)
+		add $a0, $zero, $t6	#Parametro I para get_EA
+		jal GET_EA
+		move $t4, $v0	#$t4=EA[i]
+		bne $t4, $s4 ELSE_update1
+			#$a0=$t5
+			move $a0, $t6
+			move $a1, $t5
+			jal SET_CH
+		ELSE_update1:
+		
+	blt $t6, $s5, FOR
+	move $ra, $t7	#devolvemos el valor de $ra de antes de GET_CH
+	jr $ra	
+	
 STACK_LOAD:
 	lw $v0 0($sp)
 	addi $sp, $sp, 4
