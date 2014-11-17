@@ -28,77 +28,48 @@ addi $s5, $zero, 8#MAX = 8
 
 #el programa va aqui
 FUNCION:
-	add $a0, $zero, $s1	#$a0=Target
-	jal GET_EA	#get EA[target]
-	move $t0, $v0
-	bne $s4, $t0, Salir#if EA[T]=1
-	#parametros para SET_EA
-	add $a0, $zero, $s2#$a0=ACT
-	
-	add $a1, $zero, $zero#$a1=0
-	jal SET_EA#se configura  EA[act]=0
-	
-	add $t9 , $zero, $s3#CPM=inf
-	add $t8 , $zero, $zero#pos=0
-	#for(i=0;i<6;i++)
-	add $t0, $zero, $zero#I=0
-	addi $t5, $zero, 6#seis
-	FOR_1:
-		add $a0, $zero, $t0#Parametro I para get_EA
-		jal GET_EA
-		move $t1, $v0#T1=EA[i]
-		bne $t1, $s4, ELSE_1
-			#SET_CH
-			#CH[actual] = inf
-			#CH[$a0]=$a1
-			add $a0, $zero, $s2#$a0=ACT
-			add $a1, $zero, $s3#$a1=inf
-			jal SET_CH#set CH[actual] = inf
-			#t2 = CP
-			add $a0 , $zero, $s2#$a0= ACT
-			add $a1, $zero, $t0#$a1= i
-			jal GET_MATRIX_VAL
-			move $t2, $v0
-			add $t2, $t2, $s0#CP=T2= CA+ M[ACT][i]
-			#t3= CH[i]
-			add $a0, $zero,$t0#$a0=i
-			jal GET_CH
-			move $t3, $v0
-			ble  $t3, $t2 ELSE_2
-			#blt  $t3, $t2 ELSE_2
-				
-				add $a0, $zero, $t0#$a0=i
-				add $a1, $zero, $t2
-				jal SET_CH#set costo hacia
-			ELSE_2:
-			bge $t2, $t9, ELSE_3
-			#bgt $t2, $t9, ELSE_3
-				add $t9, $zero, $t2
-				add $t8, $zero, $t0
-			ELSE_3:
-		ELSE_1:
-	addi $t0, $t0, 1
-	blt $t0, $t5, FOR_1
-	#CA=buscarMinimo(); ---> $v0 = min
-	jal FIND_MIN
-	add $s0, $zero,$v0#CA= min
-	#add $s0, $zero,$t9#CA= CPM
-	
-	add $s2, $zero, $t8#ACT = posCPM
-	
-	#t7=EA[t]
+	#EA[$a0]=$a1
+	add $a0, $zero, $s2
+	add $a1, $zero, $zero
+	jal SET_EA	#se configura  EA[act]=0
+	#if(EA[target]==0)
+	#obtener EA[target] EA[$a0]
 	add $a0, $zero, $s1
 	jal GET_EA
-	move $t7, $v0
-	beq $t7, $s4, FUNCION
-
-#se obtiene el ultimo valor de CH
-addi $a0, $zero, 5
-jal GET_CH
-move $t2, $v0#T1=EA[i]
-jal Print
-j Salir
+	move $t0, $v0 #guarda en $t0=EA[target]
 	
+	beq $t0, $zero, ELSE_1
+	jal UPDATE_CH	#guarda en CH los valores desde la posicion actual
+	jal FIND_MIN	#v0 valor minimo, v1 posicion valor minimo
+	move $t0, $v0	#$t0=$v0
+	move $t1, $v1	#$t1=$v1
+	#if(valor de FIND_MIN == 999)
+	bne $s3, $t0, ELSE_2
+	#devolverse
+	jal STACK_LOAD
+	#en v0 esta el valor de STACK_LOAD
+	sub $s0, $s0, $v0	#CA-=v0
+	jal STACK_LOAD
+	#en v0 esta la posicion de STACK_LOAD
+	add $s2, $zero, $v0	#seteamos en actual la posicion de v0
+	j FUNCION
+	
+	ELSE_2:
+	#STACK_STORE actual
+	add $a0,$zero,$s2	#a0 = actual
+	jal STACK_STORE
+	add $a0,$zero,$t0	#a0 = valor de FIND_MIN
+	jal STACK_STORE
+	add $s2, $zero, $t1	#actual=minPOS
+	add $s0, $s0, $t0	#CA+=minVAL
+	#funcion(actual, target)
+	j FUNCION	
+	ELSE_1:
+	
+	add $a0, $zero, $s0
+	jal Print
+	
+	j Salir	
 
 #funcion para obtener el valor de de la matriz
 # entrada $a0=A $a1=B, retorno en $v0
@@ -177,7 +148,7 @@ FIND_MIN:
 	add $t5, $zero, $s3	#$t5 = 999
 	add $t6, $zero, $zero	#$t6 = 0
 	move $t7, $ra	#guardamos el antiguo valor de $ra
-	FOR:
+	FOR_FM:
 		add $a0, $zero, $t6	#Parametro I para get_CH
 		jal GET_CH
 		move $t4, $v0	#$t4=CH[i]
@@ -186,14 +157,14 @@ FIND_MIN:
 			move $v1, $t6
 		ELSE:
 	addi $t6, $t6, 1
-	blt $t6, $s5, FOR
+	blt $t6, $s5, FOR_FM
 	move $v0, $t5#	se guarda en v0 el valor de t5
 	move $ra, $t7	#devolvemos el valor de $ra de antes de GET_CH
 	jr $ra	#v0 valor minimo, v1 posicion valor minimo
 UPDATE_CH:
 	add $t6, $zero, $zero	#$t6 = 0 = i
 	move $t7, $ra	#guardamos el antiguo valor de $ra
-	FOR:
+	FOR_UP:
 		add $a0, $zero, $s2
 		add $a1, $zero, $t6#M[ACT][i]
 		jal GET_MATRIX_VAL
@@ -209,7 +180,7 @@ UPDATE_CH:
 			jal SET_CH
 		ELSE_update1:
 		
-	blt $t6, $s5, FOR
+	blt $t6, $s5, FOR_UP
 	move $ra, $t7	#devolvemos el valor de $ra de antes de GET_CH
 	jr $ra	
 	
