@@ -143,7 +143,7 @@ GET_EA:
 	jr $ra#return EA[$a0]
 
 GET_CH:
-	#la $t0, CH#dir¡
+	#la $t0, CH#dirï¿½
 	#sll $t1, $a0, 2#el corrimiento
 	#add $t2, $t1, $t0#4*I+Dir 
 	#lw $t3 , 0($t2)
@@ -189,8 +189,15 @@ FIND_MIN:
 	move $v0, $t5#	se guarda en v0 el valor de t5
 	move $ra, $t7	#devolvemos el valor de $ra de antes de GET_CH
 	jr $ra	
+STACK_LOAD:
+	lw $v0 0($sp)
+	addi $sp, $sp, 4
+	jr $ra
+STACK_STORE:
+	addi $sp, $sp, -4
+	sw $a0 0($sp)
+	jr $ra
 		
-
 Print:
 	li $v0, 4 #Se carga 4 (texto) en $v0
 	la $a0, laResp #Se carga el texto "La Respuesta es: " en $a0
