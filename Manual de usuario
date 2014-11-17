@@ -1,0 +1,10 @@
+Manual de usuario 
+
+Instrucciones para modificar grafo:
+	1 escribir grafo como una matriz
+	2 escribir las filas de la matriz de manera extendida en una lista
+	3 modificar la lista EA agregando tantos 1 como tamaño sea el ancho de la matriz
+	4 modificar la lista CH agregando tantos 999 como tamaño sea el ancho de la matriz
+	5 modificar max (almacenado en $s5 en la linea 27) como en tamaño del ancho de la matriz
+	6 modificar target (almacenado en $s1 en la linea 23) con la posicion del nodo final del grafo
+	7 modificar act (almacenado en $s2 en la lina 24) con la posicion del nodo inicial del grafo
