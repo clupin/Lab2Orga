@@ -179,7 +179,7 @@ UPDATE_CH:
 			move $a1, $t5
 			jal SET_CH
 		ELSE_update1:
-		
+	addi $t6, $t6 ,1
 	blt $t6, $s5, FOR_UP
 	move $ra, $t7	#devolvemos el valor de $ra de antes de GET_CH
 	jr $ra	
